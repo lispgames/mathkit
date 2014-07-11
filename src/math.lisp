@@ -23,7 +23,6 @@
      (float (* x (/ 180.0 pi)) 1.0))
     (t (* x (/ 180 pi)))))
 
-
 (defun frustum (left right bottom top near far)
   (let ((r-l (- right left))
         (t-b (- top bottom))
@@ -55,14 +54,15 @@
   (let* ((eye (v eye))
          (target (v target))
          (up (v up))
-         (z (sb-cga:normalize (sb-cga:vec- target eye)))
-         (x (sb-cga:normalize (sb-cga:cross-product z up)))
-         (y (sb-cga:cross-product x z)))
-    (sb-cga:matrix (aref x 0) (aref y 0) (- (aref z 0)) 0.0
-                   (aref x 1) (aref y 1) (- (aref z 1)) 0.0
-                   (aref x 2) (aref y 2) (- (aref z 2)) 0.0
-                   0.0 0.0 0.0 1.0))
-)
+         (f (sb-cga:normalize (sb-cga:vec- target eye)))
+         (s (sb-cga:normalize (sb-cga:cross-product f up)))
+         (u (sb-cga:cross-product s f)))
+    (matrix* (sb-cga:matrix (aref s 0) (aref s 1) (aref s 2) 0.0
+                            (aref u 0) (aref u 1) (aref u 2) 0.0
+                            (- (aref f 0)) (- (aref f 1)) (- (aref f 2)) 0.0
+                            0.0 0.0 0.0 1.0)
+             (translate* (- (aref eye 0)) (- (aref eye 1)) (- (aref eye 2))))))
+
 (declaim (inline copy-matrix))
 (defun copy-matrix (m)
   (matrix (aref m 0) (aref m 4) (aref m 8) (aref m 12)
