@@ -33,8 +33,8 @@
             0.0 0.0 (- (/ (+ far near) f-n)) (/ (* -2 far near) f-n)
             0.0 0.0 -1.0 0.0)))
 
-(defun perspective-matrix (fovy-degrees aspect z-near z-far)
-  (let ((f (float (/ (tan (/ (deg-to-rad fovy-degrees) 2))) 1.0))
+(defun perspective-matrix (fovy aspect z-near z-far)
+  (let ((f (float (/ (tan (/ fovy 2))) 1.0))
         (dz (- z-near z-far)))
     (matrix (/ f aspect) 0.0 0.0 0.0
             0.0 f 0.0 0.0
