@@ -11,8 +11,9 @@
             (cond
               ((= (length a) ,n) a)
               ((> (length a) ,n)
-               (make-array ,n :element-type ',type
-                              :displaced-to a :displaced-index-offset 0))
+               (let ((a+ (make-array ,n :element-type ',type)))
+                 (replace a+ a)
+                 a+))
               (t (let* ((a+ (make-array ,n :element-type ',type)))
                    (replace a+ a)
                    (replace a+ r :start1 (length a))
