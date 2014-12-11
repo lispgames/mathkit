@@ -16,4 +16,5 @@
   :components
   ((:file "package")
    (:file "math")
-   (:file "quat")))
+   (:file "quat")
+   (:file "vector")))

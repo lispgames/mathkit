@@ -5,5 +5,8 @@
            #:perspective-matrix
            #:ortho-matrix
            #:look-at
-           #:frustum))
+           #:frustum
+
+           #:vec2 #:vec3 #:vec4
+           #:dvec2 #:dvec3 #:dvec4))
 
