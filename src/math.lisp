@@ -42,9 +42,9 @@
             0.0 0.0 -1.0 0.0)))
 
 (defun ortho-matrix (left right bottom top near far)
-  (let ((r-l (- right left))
-        (t-b (- top bottom))
-        (f-n (- far near)))
+  (let ((r-l (float (- right left)))
+        (t-b (float (- top bottom)))
+        (f-n (float (- far near))))
     (matrix (/ 2 r-l) 0.0 0.0 (- (/ (+ right left) r-l))
             0.0 (/ 2 t-b) 0.0 (- (/ (+ top bottom) t-b))
             0.0 0.0 (/ -2 f-n) (- (/ (+ far near) f-n))
