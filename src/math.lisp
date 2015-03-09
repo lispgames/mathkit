@@ -23,6 +23,16 @@
      (float (* x (/ 180.0 pi)) 1.0))
     (t (* x (/ 180 pi)))))
 
+(defun matrix*vec4 (matrix vector)
+  (declare (type matrix matrix)
+           (type vec4 vector))
+  (macrolet ((a (i j) `(aref matrix ,(+ (* j 4) i)))
+             (v (x) `(aref vector ,x)))
+    (vec4 (+ (* (a 0 0) (v 0)) (* (a 0 1) (v 1)) (* (a 0 2) (v 2)) (* (a 0 3) (v 3)))
+          (+ (* (a 1 0) (v 0)) (* (a 1 1) (v 1)) (* (a 1 2) (v 2)) (* (a 1 3) (v 3)))
+          (+ (* (a 2 0) (v 0)) (* (a 2 1) (v 1)) (* (a 2 2) (v 2)) (* (a 2 3) (v 3)))
+          (+ (* (a 3 0) (v 0)) (* (a 3 1) (v 1)) (* (a 3 2) (v 2)) (* (a 3 3) (v 3))))))
+
 (defun frustum (left right bottom top near far)
   (let ((r-l (- right left))
         (t-b (- top bottom))
@@ -71,4 +81,21 @@
           (aref m 3) (aref m 7) (aref m 11) (aref m 15)))
 
 
-
+(defun unproject (point model-matrix perspective-matrix viewport)
+  (declare (type vec3 point)
+           (type matrix model-matrix perspective-matrix)
+           (type vec4 viewport))
+  (let* ((inv-pm (inverse-matrix
+                  (matrix* perspective-matrix
+                           model-matrix)))
+         (new-point (vec4 (float
+                           (1- (/ (* 2 (- (aref point 0) (aref viewport 0)))
+                                  (aref viewport 2))))
+                          (float
+                           (1- (/ (* 2 (- (aref point 1) (aref viewport 1)))
+                                  (aref viewport 3))))
+                          (float (1- (* 2 (aref point 2))))
+                          1.0))
+         (obj (matrix*vec4 inv-pm new-point)))
+    (vec/ (vec3 (aref obj 0) (aref obj 1) (aref obj 2))
+          (aref obj 3))))
