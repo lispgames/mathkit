@@ -15,7 +15,7 @@
 (defun deg-to-rad (x)
   (typecase x
     (single-float
-     (float (* x (/ pi 180.0)) 1.9))
+     (float (* x (/ pi 180.0)) 1.0))
     (t (* x (/ pi 180)))))
 (defun rad-to-deg (x)
   (typecase x
