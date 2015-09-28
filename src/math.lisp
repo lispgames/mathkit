@@ -11,6 +11,11 @@
      (sb-cga:vec (float (aref l 0) 1f0) (float (aref l 1) 1f0)
                  (float (aref l 2) 1f0)))))
 
+(defmacro floatify ((&rest symbols) &body body)
+  `(let (,@(loop for symbol in symbols
+                 collect `(,symbol (float ,symbol))))
+     ,@body))
+
 (declaim (inline deg-to-rad rad-to-deg))
 (defun deg-to-rad (x)
   (typecase x
@@ -34,31 +39,34 @@
           (+ (* (a 3 0) (v 0)) (* (a 3 1) (v 1)) (* (a 3 2) (v 2)) (* (a 3 3) (v 3))))))
 
 (defun frustum (left right bottom top near far)
-  (let ((r-l (- right left))
-        (t-b (- top bottom))
-        (f-n (- far near))
-        (2near (* 2 near)))
-    (matrix (/ 2near r-l) 0.0 (/ (+ right left) r-l) 0.0
-            0.0 (/ 2near t-b) (/ (+ top bottom) t-b) 0.0
-            0.0 0.0 (- (/ (+ far near) f-n)) (/ (* -2 far near) f-n)
-            0.0 0.0 -1.0 0.0)))
+  (floatify (left right bottom top near far)
+    (let ((r-l (- right left))
+          (t-b (- top bottom))
+          (f-n (- far near))
+          (2near (* 2.0 near)))
+      (matrix (/ 2near r-l) 0.0 (/ (+ right left) r-l) 0.0
+              0.0 (/ 2near t-b) (/ (+ top bottom) t-b) 0.0
+              0.0 0.0 (- (/ (+ far near) f-n)) (/ (* -2 far near) f-n)
+              0.0 0.0 -1.0 0.0))))
 
 (defun perspective-matrix (fovy aspect z-near z-far)
-  (let ((f (float (/ (tan (/ fovy 2))) 1.0))
-        (dz (- z-near z-far)))
-    (matrix (/ f aspect) 0.0 0.0 0.0
-            0.0 f 0.0 0.0
-            0.0 0.0 (/ (+ z-near z-far) dz) (/ (* 2 z-near z-far) dz)
-            0.0 0.0 -1.0 0.0)))
+  (floatify (fovy aspect z-near z-far)
+    (let ((f (float (/ (tan (/ fovy 2))) 1.0))
+          (dz (- z-near z-far)))
+      (matrix (/ f aspect) 0.0 0.0 0.0
+              0.0 f 0.0 0.0
+              0.0 0.0 (/ (+ z-near z-far) dz) (/ (* 2 z-near z-far) dz)
+              0.0 0.0 -1.0 0.0))))
 
 (defun ortho-matrix (left right bottom top near far)
-  (let ((r-l (float (- right left)))
-        (t-b (float (- top bottom)))
-        (f-n (float (- far near))))
-    (matrix (/ 2 r-l) 0.0 0.0 (- (/ (+ right left) r-l))
-            0.0 (/ 2 t-b) 0.0 (- (/ (+ top bottom) t-b))
-            0.0 0.0 (/ -2 f-n) (- (/ (+ far near) f-n))
-            0.0 0.0 0.0 1.0)))
+  (floatify (left right bottom top near far)
+    (let ((r-l (- right left))
+          (t-b (- top bottom))
+          (f-n (- far near)))
+      (matrix (/ 2.0 r-l) 0.0 0.0 (- (/ (+ right left) r-l))
+              0.0 (/ 2.0 t-b) 0.0 (- (/ (+ top bottom) t-b))
+              0.0 0.0 (/ -2.0 f-n) (- (/ (+ far near) f-n))
+              0.0 0.0 0.0 1.0))))
 
 (defun look-at (eye target up)
   (let* ((eye (v eye))
