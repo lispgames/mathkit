@@ -38,6 +38,8 @@
           (+ (* (a 2 0) (v 0)) (* (a 2 1) (v 1)) (* (a 2 2) (v 2)) (* (a 2 3) (v 3)))
           (+ (* (a 3 0) (v 0)) (* (a 3 1) (v 1)) (* (a 3 2) (v 2)) (* (a 3 3) (v 3))))))
 
+(setf (symbol-function 'matrix*vec3) #'transform-point)
+
 (defun frustum (left right bottom top near far)
   (floatify (left right bottom top near far)
     (let ((r-l (- right left))

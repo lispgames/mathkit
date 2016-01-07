@@ -24,6 +24,10 @@
               (replace a+ r :start1 1)
               a+)))))))
 
+(define-vecn 2 (unsigned-byte 32) "i")
+(define-vecn 3 (unsigned-byte 32) "i")
+(define-vecn 4 (unsigned-byte 32) "i")
+
 (define-vecn 2 single-float)
 (define-vecn 3 single-float)
 (define-vecn 4 single-float)
