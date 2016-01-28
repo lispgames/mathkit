@@ -18,11 +18,13 @@
 
 (declaim (inline deg-to-rad rad-to-deg))
 (defun deg-to-rad (x)
+  "Converts a number from degrees to radians."
   (typecase x
     (single-float
      (float (* x (/ pi 180.0)) 1.0))
     (t (* x (/ pi 180)))))
 (defun rad-to-deg (x)
+  "Converts a number from radians to degrees."
   (typecase x
     (single-float
      (float (* x (/ 180.0 pi)) 1.0))
@@ -41,6 +43,7 @@
 (setf (symbol-function 'matrix*vec3) #'transform-point)
 
 (defun frustum (left right bottom top near far)
+  "Similar to the glFrustum matrix."
   (floatify (left right bottom top near far)
     (let ((r-l (- right left))
           (t-b (- top bottom))
@@ -52,6 +55,7 @@
               0.0 0.0 -1.0 0.0))))
 
 (defun perspective-matrix (fovy aspect z-near z-far)
+  "Similar to the gluPerspective matrix."
   (floatify (fovy aspect z-near z-far)
     (let ((f (float (/ (tan (/ fovy 2))) 1.0))
           (dz (- z-near z-far)))
@@ -61,6 +65,7 @@
               0.0 0.0 -1.0 0.0))))
 
 (defun ortho-matrix (left right bottom top near far)
+  "Similar to the glOrtho matrix."
   (floatify (left right bottom top near far)
     (let ((r-l (- right left))
           (t-b (- top bottom))
@@ -71,6 +76,7 @@
               0.0 0.0 0.0 1.0))))
 
 (defun look-at (eye target up)
+  "Similar to the gluLookAt matrix."
   (let* ((eye (v eye))
          (target (v target))
          (up (v up))
