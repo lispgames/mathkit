@@ -18,13 +18,13 @@
 
 (declaim (inline deg-to-rad rad-to-deg))
 (defun deg-to-rad (x)
-  "Converts a number from degrees to radians."
+  "Converts X, a number, from degrees to radians."
   (typecase x
     (single-float
      (float (* x (/ pi 180.0)) 1.0))
     (t (* x (/ pi 180)))))
 (defun rad-to-deg (x)
-  "Converts a number from radians to degrees."
+  "Converts X, a number, from radians to degrees."
   (typecase x
     (single-float
      (float (* x (/ 180.0 pi)) 1.0))
@@ -43,7 +43,10 @@
 (setf (symbol-function 'matrix*vec3) #'transform-point)
 
 (defun frustum (left right bottom top near far)
-  "Similar to the glFrustum matrix."
+  "Returns a projection matrix that is similar to the glFrustum matrix.
+
+  LEFT, RIGHT, BOTTOM, TOP, NEAR and FAR are numbers representing
+  their respective clipping planes. NEAR and FAR must be positive."
   (floatify (left right bottom top near far)
     (let ((r-l (- right left))
           (t-b (- top bottom))
@@ -55,7 +58,14 @@
               0.0 0.0 -1.0 0.0))))
 
 (defun perspective-matrix (fovy aspect z-near z-far)
-  "Similar to the gluPerspective matrix."
+  "Returns a projection matrix that is similar to the gluPerspective matrix.
+
+  FOVY is the field of view, in degrees.
+
+  ASPECT is the aspect ratio of the window, width / height.
+
+  Z-NEAR and Z-FAR are positive numbers representing the depth
+  clipping planes."
   (floatify (fovy aspect z-near z-far)
     (let ((f (float (/ (tan (/ fovy 2))) 1.0))
           (dz (- z-near z-far)))
@@ -65,7 +75,10 @@
               0.0 0.0 -1.0 0.0))))
 
 (defun ortho-matrix (left right bottom top near far)
-  "Similar to the glOrtho matrix."
+  "Returns a projection matrix that is similar to the glOrtho matrix.
+
+  LEFT, RIGHT, BOTTOM, TOP, NEAR and FAR are numbers representing
+  their respective clipping planes."
   (floatify (left right bottom top near far)
     (let ((r-l (- right left))
           (t-b (- top bottom))
@@ -76,7 +89,13 @@
               0.0 0.0 0.0 1.0))))
 
 (defun look-at (eye target up)
-  "Similar to the gluLookAt matrix."
+  "Returns a view matrix that is similar to the gluLookAt matrix.
+
+  EYE and TARGET are both three dimensional coordinate vectors, with
+  the former representing the eye's location and the latter the center
+  of its viewing target.
+
+  UP is a direction vector, representing which way is up for the eye."
   (let* ((eye (v eye))
          (target (v target))
          (up (v up))
